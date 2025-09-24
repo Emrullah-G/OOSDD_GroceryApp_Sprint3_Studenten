@@ -39,12 +39,20 @@ namespace Grocery.App.ViewModels
             GetAvailableProducts();
         }
 
-        private void GetAvailableProducts()
+        private void GetAvailableProducts(string searchInput = null)
         {
             AvailableProducts.Clear();
+
             foreach (Product p in _productService.GetAll())
-                if (MyGroceryListItems.FirstOrDefault(g => g.ProductId == p.Id) == null  && p.Stock > 0)
+            {
+                if (MyGroceryListItems.FirstOrDefault(g => g.ProductId == p.Id) == null
+                    && p.Stock > 0
+                    && (string.IsNullOrWhiteSpace(searchInput)
+                        || p.Name.Contains(searchInput, StringComparison.OrdinalIgnoreCase)))
+                {
                     AvailableProducts.Add(p);
+                }
+            }
         }
 
         partial void OnGroceryListChanged(GroceryList value)
@@ -84,6 +92,14 @@ namespace Grocery.App.ViewModels
             {
                 await Toast.Make($"Opslaan mislukt: {ex.Message}").Show(cancellationToken);
             }
+        }
+
+        [RelayCommand]
+        public void searchProduct(string searchInput)
+        {
+
+            GetAvailableProducts(searchInput.ToLower());
+
         }
 
     }
