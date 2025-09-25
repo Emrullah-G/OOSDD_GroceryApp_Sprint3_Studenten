@@ -33,5 +33,11 @@ namespace Grocery.Core.Data.Repositories
         {
             return clientList;
         }
+
+        public void Add(Client client)
+        {
+            clientList.Add(client);
+        }
+
     }
 }
