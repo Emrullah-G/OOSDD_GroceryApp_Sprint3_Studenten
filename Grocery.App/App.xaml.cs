@@ -12,5 +12,7 @@ namespace Grocery.App
             //MainPage = new AppShell();
             MainPage = new LoginView(viewModel);
         }
+
+        public static object Services { get; internal set; }
     }
 }
