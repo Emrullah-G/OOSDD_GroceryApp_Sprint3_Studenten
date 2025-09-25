@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
+using System.Xml.Linq;
 
 namespace Grocery.App.ViewModels
 {
@@ -18,7 +19,11 @@ namespace Grocery.App.ViewModels
         private string password = "user3";
 
         [ObservableProperty]
-        private string loginMessage;
+        private string errorMessage;
+
+        [ObservableProperty]
+        private string? name;
+
 
         public LoginViewModel(IAuthService authService, GlobalViewModel global)
         { //_authService = App.Services.GetServices<IAuthService>().FirstOrDefault();
@@ -32,14 +37,31 @@ namespace Grocery.App.ViewModels
             Client? authenticatedClient = _authService.Login(Email, Password);
             if (authenticatedClient != null)
             {
-                LoginMessage = $"Welkom {authenticatedClient.Name}!";
+                ErrorMessage = $"Welkom {authenticatedClient.Name}!";
                 _global.Client = authenticatedClient;
                 Application.Current.MainPage = new AppShell();
             }
             else
             {
-                LoginMessage = "Ongeldige inloggegevens.";
+                ErrorMessage = "Ongeldige inloggegevens.";
             }
         }
+
+        [RelayCommand]
+        private void Register()
+        {
+            Client? authenticatedClient = _authService.Register(Email, Password, Name);
+            if (authenticatedClient != null)
+            {
+                ErrorMessage = $"Welkom {authenticatedClient.Name}!";
+                _global.Client = authenticatedClient;
+                Application.Current.MainPage = new AppShell();
+            }
+            else
+            {
+                ErrorMessage = "Ongeldige register gegevens.";
+            }
+        }
+
     }
 }
